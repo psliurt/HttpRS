@@ -232,19 +232,27 @@ namespace HttpRS
                 }
                 catch (NotSupportedException nse)
                 {
-
+                    rspResult.ErrorMsg = nse.StackTrace.ToString();
+                    rspResult.IsResultError = true;
+                    return rspResult;
                 }
                 catch (ProtocolViolationException pve)
                 {
-
+                    rspResult.ErrorMsg = pve.StackTrace.ToString();
+                    rspResult.IsResultError = true;
+                    return rspResult;
                 }
                 catch (InvalidOperationException ivoe)
                 {
-
+                    rspResult.ErrorMsg = ivoe.StackTrace.ToString();
+                    rspResult.IsResultError = true;
+                    return rspResult;
                 }
                 catch (Exception e)
                 {
-                    //log or do some process
+                    rspResult.ErrorMsg = e.StackTrace.ToString();
+                    rspResult.IsResultError = true;
+                    return rspResult;
                 }
                 finally
                 {
@@ -283,27 +291,35 @@ namespace HttpRS
             }
             catch (NotSupportedException nse)
             {
-
+                rspResult.ErrorMsg = nse.StackTrace.ToString();
+                rspResult.IsResultError = true;
+                return rspResult;
             }
             catch (ProtocolViolationException pve)
             {
-
+                rspResult.ErrorMsg = pve.StackTrace.ToString();
+                rspResult.IsResultError = true;
+                return rspResult;
             }
             catch (InvalidOperationException ivoe)
             {
-
+                rspResult.ErrorMsg = ivoe.StackTrace.ToString();
+                rspResult.IsResultError = true;
+                return rspResult;
             }
             catch (Exception e)
             {
-
+                rspResult.ErrorMsg = e.StackTrace.ToString();
+                rspResult.IsResultError = true;
+                return rspResult;
             }
 
             _responseHeader = HeaderHelper.ParseResponseHeader(_response);
-
             SetResponseEncoding(Encoding.GetEncoding(_response.CharacterSet));
 
             Stream inputStream = null;
             String responseString = string.Empty;
+
             try
             {
                 inputStream = _response.GetResponseStream();
@@ -314,22 +330,33 @@ namespace HttpRS
             }
             catch (ObjectDisposedException ode)
             {
-
+                rspResult.ErrorMsg = ode.StackTrace.ToString();
+                rspResult.IsResultError = true;
+                return rspResult;
             }
             catch (ProtocolViolationException pve)
             {
+                rspResult.ErrorMsg = pve.StackTrace.ToString();
+                rspResult.IsResultError = true;
+                return rspResult;
             }
             catch (OutOfMemoryException oome)
             {
-
+                rspResult.ErrorMsg = oome.StackTrace.ToString();
+                rspResult.IsResultError = true;
+                return rspResult;
             }
             catch (IOException ioe)
             {
-
+                rspResult.ErrorMsg = ioe.StackTrace.ToString();
+                rspResult.IsResultError = true;
+                return rspResult;
             }
             catch (Exception e)
             {
-                //log some error message or do some process;
+                rspResult.ErrorMsg = e.StackTrace.ToString();
+                rspResult.IsResultError = true;
+                return rspResult;
             }
             finally
             {
