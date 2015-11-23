@@ -10,7 +10,13 @@ namespace HttpRS
     /// </summary>
     public class JsonRequestSender
     {
+        /// <summary>
+        /// object instance of HttpHeaderList
+        /// </summary>
         private HttpHeaderList _headers { get; set; }
+        /// <summary>
+        /// object instance of HttpSender
+        /// </summary>
         private HttpSender _sender { get; set; }
 
         /// <summary>
@@ -24,16 +30,29 @@ namespace HttpRS
             _sender = new HttpSender(url, Encoding.UTF8);
         }
 
+        /// <summary>
+        /// Add Http Header.
+        /// </summary>
+        /// <param name="header">header string</param>
+        /// <param name="val">The value of the header</param>
         public void AddHeader(string header, string val)
         {
-            //content-type預設會加，所以這邊若有使用者再次加入，就會擋掉。
+            //The Header "Content-Type" is added by default,
+            //it would not be added, if you add it again.
             if (header.ToLower().Trim() == "content-type")
             { return; }
 
+            //add the header 
             _headers.AddHeader(header, val);
         }
 
-
+        /// <summary>
+        /// SendJson Method will send out the http request, which http body is the json format.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="method">the Http request method.</param>
+        /// <param name="obj">the obj you want to send in json format.</param>
+        /// <returns></returns>
         public ResponseResult SendJson<T>(HttpRequestMethod method, T obj) where T: class
         {
             string reqBody = JsonConvert.SerializeObject(obj);

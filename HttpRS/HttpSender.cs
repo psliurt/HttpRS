@@ -6,6 +6,9 @@ using System.Net;
 using System.IO;
 namespace HttpRS
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class HttpSender
     {
         private HttpWebRequest _request;

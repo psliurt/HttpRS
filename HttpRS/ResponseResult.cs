@@ -5,15 +5,28 @@ using System.Text;
 
 namespace HttpRS
 {
+    /// <summary>
+    /// The Http Response result.
+    /// This object will be made after HttpSender or JsonRequestSender Send out the Http Request.
+    /// </summary>
     public class ResponseResult
     {
         private string _statusMsg;
 
         public bool IsResultError { get; set; }
         public string ErrorMsg { get; set; }
+        /// <summary>
+        /// The http response body
+        /// </summary>
         public string ResponseBody { get; set; }
+        /// <summary>
+        /// The http response status code
+        /// </summary>
         public int StatusCode { get; set; }        
         public string OtherNote { get; set; }
+        /// <summary>
+        /// The Response headers
+        /// </summary>
         public HttpHeaderList Headers { get; set; }
 
         public string StatusMsg 

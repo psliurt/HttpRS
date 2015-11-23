@@ -6,8 +6,17 @@ using System.Net;
 
 namespace HttpRS
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class HeaderHelper
     {
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="request"></param>
+        /// <param name="headers"></param>
+        /// <returns></returns>
         public static HttpWebRequest BuildRequestHeader(HttpWebRequest request, HttpHeaderList headers)
         {
             foreach (String h in headers.GetHeaderKeys())
