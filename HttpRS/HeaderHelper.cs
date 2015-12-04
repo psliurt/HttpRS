@@ -89,9 +89,9 @@ namespace HttpRS
             return request;
         }
         /// <summary>
-        /// 
+        /// 解析Http Response的header
         /// </summary>
-        /// <param name="response"></param>
+        /// <param name="response">HttpWebResponse 物件</param>
         /// <returns></returns>
         public static HttpHeaderList ParseResponseHeader(HttpWebResponse response)
         {

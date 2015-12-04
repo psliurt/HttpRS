@@ -11,15 +11,15 @@ namespace HttpRS
     public class HttpHeaderList
     {
         /// <summary>
-        /// 
+        /// A dictionary saves the http header name and value.
         /// </summary>
         private Dictionary<string, string> _headers = new Dictionary<string, string>();
 
         /// <summary>
-        /// 
+        /// 加入一個Http Header 
         /// </summary>
-        /// <param name="headerKey"></param>
-        /// <param name="headerValue"></param>
+        /// <param name="headerKey">The header name</param>
+        /// <param name="headerValue">The header value</param>
         /// <returns></returns>
         public bool AddHeader(string headerKey, string headerValue)
         {
@@ -32,7 +32,7 @@ namespace HttpRS
         }
 
         /// <summary>
-        /// 
+        /// get header collection, which is the dictionary type.
         /// </summary>
         /// <returns></returns>
         public Dictionary<string, string> GetHeaderCollection()
@@ -41,7 +41,7 @@ namespace HttpRS
         }
 
         /// <summary>
-        /// 
+        /// Get all header's name
         /// </summary>
         /// <returns></returns>
         public List<String> GetHeaderKeys()
@@ -50,7 +50,7 @@ namespace HttpRS
         }
 
         /// <summary>
-        /// 
+        /// get header value by header name
         /// </summary>
         /// <param name="headerName"></param>
         /// <returns></returns>
@@ -61,8 +61,7 @@ namespace HttpRS
                 if (h.Trim().ToLower() == headerName.ToLower())
                 { return _headers[h]; }
             }
-            return string.Empty;
-            
+            return string.Empty;            
         }
 
     }

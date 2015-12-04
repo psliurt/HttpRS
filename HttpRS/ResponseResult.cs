@@ -11,9 +11,14 @@ namespace HttpRS
     /// </summary>
     public class ResponseResult
     {
-        private string _statusMsg;
-
+        
+        /// <summary>
+        /// error flag
+        /// </summary>
         public bool IsResultError { get; set; }
+        /// <summary>
+        /// The error message which generate during sending http request
+        /// </summary>
         public string ErrorMsg { get; set; }
         /// <summary>
         /// The http response body
@@ -22,12 +27,17 @@ namespace HttpRS
         /// <summary>
         /// The http response status code
         /// </summary>
-        public int StatusCode { get; set; }        
+        public int StatusCode { get; set; }   
+        /// <summary>
+        /// note
+        /// </summary>
         public string OtherNote { get; set; }
         /// <summary>
         /// The Response headers
         /// </summary>
         public HttpHeaderList Headers { get; set; }
+
+        private string _statusMsg;
 
         public string StatusMsg 
         { 

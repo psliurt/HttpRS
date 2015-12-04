@@ -41,6 +41,13 @@ namespace HttpRS
             _responseStreamEncoding = Encoding.Default;
         }
 
+        public HttpSender(string url, Encoding requestEncoding, Encoding responseEncoding)
+        {
+            _uri = new Uri(url);
+            _requestStreamEncoding = requestEncoding;
+            _responseStreamEncoding = responseEncoding;
+        }
+
         public void SetUrl(string url)
         {
             _uri = new Uri(url);
@@ -55,7 +62,10 @@ namespace HttpRS
         {
             _responseStreamEncoding = encoding;
         }
-
+        /// <summary>
+        /// 取得HttpWebResponse的Header
+        /// </summary>
+        /// <returns></returns>
         public HttpHeaderList GetResponseHeaders()
         {
             return _responseHeader;
@@ -63,146 +73,17 @@ namespace HttpRS
 
         public String SendRequest(String method, String body, HttpHeaderList header)
         {
-            _request = (HttpWebRequest)WebRequest.Create(_uri);
-            _request.Method = method;
-            _request = HeaderHelper.BuildRequestHeader(_request, header);
-
-            if (!string.IsNullOrEmpty(method) &&
-                method.Trim().ToUpper() != "GET" &&
-                !string.IsNullOrEmpty(body))
-            {
-                Stream outStream = null;
-                try
-                {
-                    outStream = _request.GetRequestStream();
-                    byte[] outData = _requestStreamEncoding.GetBytes(body);
-                    //_request.ContentLength = outData.Length;// Is this can rewrite by program?
-                    outStream.Write(outData, 0, outData.Length);
-                }
-                catch (WebException we)
-                {
-                    if (we.Response == null)
-                    {
-                        return we.Status.ToString();
-                    }
-                    else
-                    { 
-                        
-                    }
-                }
-                catch (NotSupportedException nse)
-                {
-
-                }
-                catch (ProtocolViolationException pve)
-                {
-
-                }
-                catch (InvalidOperationException ivoe)
-                {
-
-                }
-                catch (Exception e)
-                {
-                    //log or do some process
-                }
-                finally
-                {
-                    if (outStream != null)
-                    {
-                        outStream.Close();
-                    }
-                }
-            }
-
-            try
-            {
-                _response = (HttpWebResponse)_request.GetResponse();
-            }
-            catch (WebException we)
-            {
-                _response = (HttpWebResponse)we.Response;
-                _responseHeader = HeaderHelper.ParseResponseHeader(_response);
-                //string ct = _responseHeader.GetHeaderValue("content-type");
-                //ParseContentType(ct);
-
-                SetResponseEncoding(Encoding.GetEncoding(_response.CharacterSet));
-
-                Stream inputs = _response.GetResponseStream();
-                string respBody = string.Empty;
-                //using (StreamReader sr = new StreamReader(inputs, _responseStreamEncoding))
-                using (StreamReader sr = new StreamReader(inputs, Encoding.GetEncoding(_response.CharacterSet)))
-                {
-                    respBody = sr.ReadToEnd();
-                }
-                string statusMsg = string.Format("({0})\r\n{1}", _response.StatusDescription, respBody);
-                return statusMsg;
-            }
-            catch (NotSupportedException nse)
-            {
-
-            }
-            catch (ProtocolViolationException pve)
-            { 
-            
-            }
-            catch (InvalidOperationException ivoe)
-            {
-
-            }
-            catch (Exception e)
-            { 
-            
-            }
-            
-            _responseHeader = HeaderHelper.ParseResponseHeader(_response);
-            //string contentType = _responseHeader.GetHeaderValue("content-type");
-            //ParseContentType(contentType);
-
-            SetResponseEncoding(Encoding.GetEncoding(_response.CharacterSet));
-
-            Stream inputStream = null;
-            String responseString = string.Empty;
-            try
-            {
-                inputStream = _response.GetResponseStream();
-                using (StreamReader sr = new StreamReader(inputStream, Encoding.GetEncoding(_response.CharacterSet)))
-                {
-                    responseString = sr.ReadToEnd();
-                }
-            }
-            catch (ObjectDisposedException ode)
-            {
-
-            }
-            catch (ProtocolViolationException pve)
-            {
-            }
-            catch (OutOfMemoryException oome)
-            {
-
-            }
-            catch (IOException ioe)
-            { 
-            
-            }
-            catch (Exception e)
-            {
-                //log some error message or do some process;
-            }
-            finally
-            {
-                if (inputStream != null)
-                {
-                    inputStream.Close();
-                }
-                _response.Close();
-            }
-            return responseString;
+            // change method string to enum
+            ResponseResult result = SendOutRequest(ParseHttpMethod(method), body, header);
+            return result.ResponseBody;
         }
 
-
         public ResponseResult SendRequest(HttpRequestMethod method, String body, HttpHeaderList header)
+        {
+            return SendOutRequest(method, body, header);            
+        }
+
+        private ResponseResult SendOutRequest(HttpRequestMethod method, string body, HttpHeaderList header)
         {
             ResponseResult rspResult = new ResponseResult();
             _request = (HttpWebRequest)WebRequest.Create(_uri);
@@ -273,7 +154,7 @@ namespace HttpRS
             catch (WebException we)
             {
                 _response = (HttpWebResponse)we.Response;
-                _responseHeader = HeaderHelper.ParseResponseHeader(_response);                
+                _responseHeader = HeaderHelper.ParseResponseHeader(_response);
 
                 SetResponseEncoding(Encoding.GetEncoding(_response.CharacterSet));
 
@@ -368,15 +249,41 @@ namespace HttpRS
                     inputStream.Close();
                 }
                 _response.Close();
-            }            
+            }
 
             rspResult.ResponseBody = responseString;
             rspResult.IsResultError = false;
             rspResult.Headers = _responseHeader;
             rspResult.StatusMsg = _response.StatusCode.ToString();
-
             return rspResult;
         }
+
+        private HttpRequestMethod ParseHttpMethod(string methodStr)
+        {
+            string upperCaseMethodStr = methodStr.Trim().ToUpper();
+            switch (upperCaseMethodStr)
+            { 
+                case "OPTIONS":
+                    return HttpRequestMethod.Options;
+                case "GET":
+                    return HttpRequestMethod.Get;
+                case "HEAD":
+                    return HttpRequestMethod.Head;
+                case "POST":
+                    return HttpRequestMethod.Post;
+                case "PUT":
+                    return HttpRequestMethod.Put;
+                case "DELETE":
+                    return HttpRequestMethod.Delete;
+                case "TRACE":
+                    return HttpRequestMethod.Trace;
+                case "CONNECT":
+                    return HttpRequestMethod.Connect;
+                default:
+                    return HttpRequestMethod.Post;
+            }
+        }
+
     }
 
     public enum HttpRequestMethod
