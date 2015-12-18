@@ -75,12 +75,12 @@ namespace HttpRS
                     case "if-modified-since":
                         request.IfModifiedSince = Convert.ToDateTime(headers.GetHeaderValue(h));
                         break;
-                    case "refer":
+                    case "referer":
                         request.Referer = headers.GetHeaderValue(h);
                         break;
                     case "user-agent":
                         request.UserAgent = headers.GetHeaderValue(h);
-                        break;  
+                        break;                     
                     default:
                         request.Headers.Add(h, headers.GetHeaderValue(h));
                         break;

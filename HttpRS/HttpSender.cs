@@ -29,28 +29,73 @@ namespace HttpRS
 
         public HttpSender(string url)
         {
-            _uri = new Uri(url);
+            try
+            {
+                _uri = new Uri(url);
+            }
+            catch (ArgumentException ae)
+            {
+                throw;
+            }
+            catch (UriFormatException ufe)
+            {
+                throw;
+            }
             _requestStreamEncoding = Encoding.Default;
             _responseStreamEncoding = Encoding.Default;
         }
 
         public HttpSender(string url, Encoding reqEncoding)
         {
-            _uri = new Uri(url);
+            try
+            {
+                _uri = new Uri(url);
+            }
+            catch (ArgumentException ae)
+            {
+                throw;
+            }
+            catch (UriFormatException ufe)
+            {
+                throw;
+            }
             _requestStreamEncoding = reqEncoding;
             _responseStreamEncoding = Encoding.Default;
         }
 
         public HttpSender(string url, Encoding requestEncoding, Encoding responseEncoding)
         {
-            _uri = new Uri(url);
+            try
+            {
+                _uri = new Uri(url);
+            }
+            catch (ArgumentException ae)
+            {
+                throw;
+            }
+            catch (UriFormatException ufe)
+            {
+                throw;
+            }
+            
             _requestStreamEncoding = requestEncoding;
             _responseStreamEncoding = responseEncoding;
         }
 
         public void SetUrl(string url)
         {
-            _uri = new Uri(url);
+            try
+            {
+                _uri = new Uri(url);
+            }
+            catch (ArgumentException ae)
+            {
+                throw;
+            }
+            catch (UriFormatException ufe)
+            {
+                throw;
+            }
         }
 
         public void SetRequestEncoding(Encoding encoding)
@@ -200,6 +245,7 @@ namespace HttpRS
 
             _responseHeader = HeaderHelper.ParseResponseHeader(_response);
             SetResponseEncoding(Encoding.GetEncoding(_response.CharacterSet));
+            //SetRequestEncoding(Encoding.Unicode);
 
             Stream inputStream = null;
             String responseString = string.Empty;
@@ -258,7 +304,7 @@ namespace HttpRS
             return rspResult;
         }
 
-        private HttpRequestMethod ParseHttpMethod(string methodStr)
+        public HttpRequestMethod ParseHttpMethod(string methodStr)
         {
             string upperCaseMethodStr = methodStr.Trim().ToUpper();
             switch (upperCaseMethodStr)
