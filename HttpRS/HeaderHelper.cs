@@ -6,8 +6,17 @@ using System.Net;
 
 namespace HttpRS
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class HeaderHelper
     {
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="request"></param>
+        /// <param name="headers"></param>
+        /// <returns></returns>
         public static HttpWebRequest BuildRequestHeader(HttpWebRequest request, HttpHeaderList headers)
         {
             foreach (String h in headers.GetHeaderKeys())
@@ -66,12 +75,12 @@ namespace HttpRS
                     case "if-modified-since":
                         request.IfModifiedSince = Convert.ToDateTime(headers.GetHeaderValue(h));
                         break;
-                    case "refer":
+                    case "referer":
                         request.Referer = headers.GetHeaderValue(h);
                         break;
                     case "user-agent":
                         request.UserAgent = headers.GetHeaderValue(h);
-                        break;  
+                        break;                     
                     default:
                         request.Headers.Add(h, headers.GetHeaderValue(h));
                         break;
@@ -80,9 +89,9 @@ namespace HttpRS
             return request;
         }
         /// <summary>
-        /// 
+        /// 解析Http Response的header
         /// </summary>
-        /// <param name="response"></param>
+        /// <param name="response">HttpWebResponse 物件</param>
         /// <returns></returns>
         public static HttpHeaderList ParseResponseHeader(HttpWebResponse response)
         {
