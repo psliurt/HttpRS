@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Net;
 using System.IO;
+using System.Linq;
+using System.Net;
+using System.Text;
+using System.Text.RegularExpressions;
+
+
 namespace HttpRS
 {
     public class HttpSender
@@ -73,7 +76,6 @@ namespace HttpRS
                 {
                     outStream = _request.GetRequestStream();
                     byte[] outData = _requestStreamEncoding.GetBytes(body);
-                    //_request.ContentLength = outData.Length;// Is this can rewrite by program?
                     outStream.Write(outData, 0, outData.Length);
                 }
                 catch (WebException we)
@@ -120,18 +122,20 @@ namespace HttpRS
             {
                 _response = (HttpWebResponse)we.Response;
                 _responseHeader = HeaderHelper.ParseResponseHeader(_response);
-                //string ct = _responseHeader.GetHeaderValue("content-type");
-                //ParseContentType(ct);
 
                 SetResponseEncoding(Encoding.GetEncoding(_response.CharacterSet));
 
                 Stream inputs = _response.GetResponseStream();
                 string respBody = string.Empty;
+
                 //using (StreamReader sr = new StreamReader(inputs, _responseStreamEncoding))
                 using (StreamReader sr = new StreamReader(inputs, Encoding.GetEncoding(_response.CharacterSet)))
                 {
                     respBody = sr.ReadToEnd();
                 }
+
+                
+
                 string statusMsg = string.Format("({0})\r\n{1}", _response.StatusDescription, respBody);
                 return statusMsg;
             }
@@ -272,6 +276,8 @@ namespace HttpRS
                 {
                     respBody = sr.ReadToEnd();
                 }
+
+
                 string statusMsg = string.Format("({0})\r\n{1}", _response.StatusDescription, respBody);
 
                 rspResult.Headers = _responseHeader;
@@ -311,6 +317,14 @@ namespace HttpRS
                 {
                     responseString = sr.ReadToEnd();
                 }
+
+
+                if (_response.ContentType.Contains("text/html"))
+                {
+                    //charset\s{0,}=\s{0,}"\s{0,}[\d\w]{0,}\D{0,}[\d\w]{0,}\D{0,}[\d\w]{0,}\z{0,}"
+                    ParseHtmlCharSet(responseString);
+                }
+
             }
             catch (ObjectDisposedException ode)
             {
@@ -346,6 +360,17 @@ namespace HttpRS
             rspResult.StatusMsg = _response.StatusCode.ToString();
 
             return rspResult;
+        }
+
+        private Encoding ParseHtmlCharSet(string html)
+        {
+            Regex reg = new Regex(@"charset\s{0,}=\s{0,}""\s{0,}[\d\w]{0,}\D{0,}[\d\w]{0,}\D{0,}[\d\w]{0,}\z{0,}""");
+            Match m = reg.Match(html);
+            string s = m.Value;
+            Regex rx = new Regex(@"charset\s{0,}=\s{0,}[\w]{1,}\D{0,1}[\d\w]{0,}");
+            Match mm = rx.Match(html);
+            string ss = mm.Value;
+            return Encoding.UTF8;
         }
     }
 
