@@ -12,7 +12,7 @@ namespace HttpRS
     public class HeaderHelper
     {
         /// <summary>
-        /// 
+        /// 建立請求的頭檔
         /// </summary>
         /// <param name="request"></param>
         /// <param name="headers"></param>
@@ -43,6 +43,7 @@ namespace HttpRS
                         break;
                     case "authorization":
                         request.PreAuthenticate = true;
+                        request.Headers.Add("Authorization", headers.GetHeaderValue(h));                        
                         break;
                     case "connection":
                         {
@@ -96,10 +97,13 @@ namespace HttpRS
         public static HttpHeaderList ParseResponseHeader(HttpWebResponse response)
         {
             HttpHeaderList headers = new HttpHeaderList();
-            foreach (string headerKey in response.Headers.AllKeys)
+            if (response != null && response.Headers != null)
             {
-                headers.AddHeader(headerKey, response.Headers[headerKey]);
-            }
+                foreach (string headerKey in response.Headers.AllKeys)
+                {
+                    headers.AddHeader(headerKey, response.Headers[headerKey]);
+                }
+            }            
             return headers;
         }
     }

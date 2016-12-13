@@ -132,6 +132,7 @@ namespace HttpRS
         {
             ResponseResult rspResult = new ResponseResult();
             _request = (HttpWebRequest)WebRequest.Create(_uri);
+            ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
             _request.Method = method.ToString().ToUpper();
             _request = HeaderHelper.BuildRequestHeader(_request, header);
 
@@ -201,11 +202,18 @@ namespace HttpRS
                 _response = (HttpWebResponse)we.Response;
                 _responseHeader = HeaderHelper.ParseResponseHeader(_response);
 
-                SetResponseEncoding(Encoding.GetEncoding(_response.CharacterSet));
+                if (_response == null || string.IsNullOrEmpty(_response.CharacterSet))
+                {
+                    SetResponseEncoding(Encoding.UTF8);
+                }
+                else
+                {
+                    SetResponseEncoding(Encoding.GetEncoding(_response.CharacterSet));
+                } 
 
                 Stream inputs = _response.GetResponseStream();
                 string respBody = string.Empty;
-                using (StreamReader sr = new StreamReader(inputs, Encoding.GetEncoding(_response.CharacterSet)))
+                using (StreamReader sr = new StreamReader(inputs, this._responseStreamEncoding))
                 {
                     respBody = sr.ReadToEnd();
                 }
@@ -244,16 +252,23 @@ namespace HttpRS
             }
 
             _responseHeader = HeaderHelper.ParseResponseHeader(_response);
-            SetResponseEncoding(Encoding.GetEncoding(_response.CharacterSet));
-            //SetRequestEncoding(Encoding.Unicode);
+
+            if (_response == null || string.IsNullOrEmpty(_response.CharacterSet))
+            {
+                SetResponseEncoding(Encoding.UTF8);
+            }
+            else
+            {
+                SetResponseEncoding(Encoding.GetEncoding(_response.CharacterSet));
+            }            
 
             Stream inputStream = null;
             String responseString = string.Empty;
 
             try
             {
-                inputStream = _response.GetResponseStream();
-                using (StreamReader sr = new StreamReader(inputStream, Encoding.GetEncoding(_response.CharacterSet)))
+                inputStream = _response.GetResponseStream();                
+                using (StreamReader sr = new StreamReader(inputStream, this._responseStreamEncoding))
                 {
                     responseString = sr.ReadToEnd();
                 }
