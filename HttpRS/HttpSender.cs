@@ -294,7 +294,7 @@ namespace HttpRS
 
             _responseHeader = HeaderHelper.ParseResponseHeader(_response);
 
-            _log.InfoFormat("[ Proc SendOutRequest ], 解析回應的Response Header完畢。");
+            _log.InfoFormat("[ Proc SendOutRequest ], 解析回應的Response Header完畢。");           
 
             if (_response == null || string.IsNullOrEmpty(_response.CharacterSet))
             {
@@ -302,7 +302,7 @@ namespace HttpRS
             }
             else
             {
-                SetResponseEncoding(Encoding.GetEncoding(_response.CharacterSet));
+                SetResponseEncoding(Encoding.GetEncoding(_response.CharacterSet));                
             }            
 
             Stream inputStream = null;
