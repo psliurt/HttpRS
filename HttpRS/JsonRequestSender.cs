@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Newtonsoft.Json;
+using log4net;
+
 namespace HttpRS
 {
     /// <summary>
@@ -20,11 +22,18 @@ namespace HttpRS
         private HttpSender _sender { get; set; }
 
         /// <summary>
+        /// log object
+        /// </summary>
+        private ILog _log = LogManager.GetLogger(typeof(JsonRequestSender));
+
+        /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="url"></param>
         public JsonRequestSender(string url)
         {
+            _log.InfoFormat("[ Constructor JsonRequestSender ], Url Parameter=>{0}", url);
+
             _headers = new HttpHeaderList();
             _headers.AddHeader("Content-Type", "application/json; charset=utf-8");
             _sender = new HttpSender(url, Encoding.UTF8);
@@ -37,6 +46,8 @@ namespace HttpRS
         /// <param name="val">The value of the header</param>
         public void AddHeader(string header, string val)
         {
+            _log.InfoFormat("[ Start AddHeader ], 加入一個Header資料, header=>{0}, value=>{1}", header, val);
+
             //The Header "Content-Type" is added by default,
             //it would not be added, if you add it again.
             if (header.ToLower().Trim() == "content-type")
@@ -44,6 +55,8 @@ namespace HttpRS
 
             //add the header 
             _headers.AddHeader(header, val);
+
+            _log.InfoFormat("[ End AddHeader ], 加入一個Header資料完畢, header=>{0}, value=>{1}", header, val);
         }
 
         /// <summary>
@@ -55,7 +68,12 @@ namespace HttpRS
         /// <returns></returns>
         public ResponseResult SendJson<T>(HttpRequestMethod method, T obj) where T: class
         {
+            _log.InfoFormat("[ Start SendJson ], 準備送出Json Request, method=>{0}", method);
+
             string reqBody = JsonConvert.SerializeObject(obj);
+
+            _log.InfoFormat("[ Proc SendJson ], 要送出的Json Request Body ,method=>{0} reqBody=>{1}", method, reqBody);
+
             return _sender.SendRequest(method, reqBody, _headers);
         }
     }
