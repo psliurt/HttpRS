@@ -148,7 +148,7 @@ namespace HttpRS
             _log.InfoFormat("[ Proc SendOutRequest ], HttpWebRequest物件建立完畢, method=>{0}, body=>{1}", method, body);                
 
             ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
-            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls11 | SecurityProtocolType.Tls12;                                     
+            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls11 | SecurityProtocolType.Tls12 | SecurityProtocolType.Tls;                                     
 
             _request.Method = method.ToString().ToUpper();
             _request = HeaderHelper.BuildRequestHeader(_request, header);
