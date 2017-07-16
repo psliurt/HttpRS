@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Net;
 
 namespace HttpRS
 {
@@ -36,6 +37,14 @@ namespace HttpRS
         /// The Response headers
         /// </summary>
         public HttpHeaderList Headers { get; set; }
+
+        public CookieContainer RequestCookieBag { get; set; }
+
+        public CookieCollection ResponseCookieBag { get; set; }
+
+        public HttpWebRequest RequestInstance { get; set; }
+
+        public HttpWebResponse ResponseInstance { get; set; }
 
         private string _statusMsg;
 
