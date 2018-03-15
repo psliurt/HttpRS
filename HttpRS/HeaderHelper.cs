@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Net;
-using log4net;
 using Newtonsoft.Json;
 
 namespace HttpRS
@@ -13,7 +12,7 @@ namespace HttpRS
     /// </summary>
     public class HeaderHelper
     {
-        private static ILog _log = LogManager.GetLogger(typeof(HeaderHelper));
+        
 
         /// <summary>
         /// 建立請求的頭檔
@@ -23,14 +22,10 @@ namespace HttpRS
         /// <returns></returns>
         public static HttpWebRequest BuildRequestHeader(HttpWebRequest request, HttpHeaderList headers)
         {
-            _log.InfoFormat("[ Start BuildRequestHeader ], 開始建立Request所需要的Header, 把HttpHeaderList內的標頭資料轉換成HttpWebRequest的Header, 自定義的HttpHeaderList=>{0}", JsonConvert.SerializeObject(headers));
-
             try
             {
                 foreach (String h in headers.GetHeaderKeys())
                 {
-                    _log.InfoFormat("[ Proc BuildRequestHeader ], 開始建立Request所需要的Header, header=>{0}", h);
-
                     switch (h.Trim().ToLower())
                     {
                         case "accept":
@@ -109,19 +104,10 @@ namespace HttpRS
             }
             catch (Exception e)
             {
-                _log.InfoFormat("[ Proc BuildRequestHeader Error ]");
-                _log.Error(e);
-                _log.Error(e.Message);
-                _log.Error(e.StackTrace);
-                if (e.InnerException != null)
-                {
-                    _log.Error(e.InnerException);
-                    _log.Error(e.InnerException.Message);
-                    _log.Error(e.InnerException.StackTrace);
-                }
-            }            
+                
+            }
 
-            _log.InfoFormat("[ End BuildRequestHeader ], 開始建立Request所需要的Header,把HttpHeaderList內的標頭資料轉換成HttpWebRequest的Header, 自定義的HttpHeaderList=>{0}", JsonConvert.SerializeObject(headers));
+            
 
             return request;
         }
@@ -133,8 +119,6 @@ namespace HttpRS
         /// <returns></returns>
         public static HttpHeaderList ParseResponseHeader(HttpWebResponse response)
         {
-            _log.InfoFormat("[ Start ParseResponseHeader ], 開始解析Response物件的標頭");
-
             HttpHeaderList headers = new HttpHeaderList();
             try
             {
@@ -142,27 +126,14 @@ namespace HttpRS
                 {
                     foreach (string headerKey in response.Headers.AllKeys)
                     {
-                        _log.InfoFormat("[ Proc ParseResponseHeader ], 讀取Response物件內的Header, headerKey=>{0}, header value=>{1}", headerKey, response.Headers[headerKey]);
-
                         headers.AddHeader(headerKey, response.Headers[headerKey]);
                     }
                 }
             }
             catch (Exception e)
             {
-                _log.InfoFormat("[ Proc ParseResponseHeader Error ]");
-                _log.Error(e);
-                _log.Error(e.Message);
-                _log.Error(e.StackTrace);
-                if (e.InnerException != null)
-                {
-                    _log.Error(e.InnerException);
-                    _log.Error(e.InnerException.Message);
-                    _log.Error(e.InnerException.StackTrace);
-                }
+                // TODO: handle exception
             }            
-
-            _log.InfoFormat("[ End ParseResponseHeader ], 解析Response物件的標頭完畢, 標頭檔物件(headers)=>{0}", JsonConvert.SerializeObject(headers, Formatting.Indented));
             return headers;
         }
     }
